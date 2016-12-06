@@ -1,17 +1,23 @@
+require 'pry-remote'
+
 class QuantizeVideo
 
-  def initialize(onset_times, best_approx_beat, video_duration_seconds)
+  def initialize(onset_times=nil, main_beat=nil, path_to_video=nil)
+    @extract_scene_segments_command = ""
+    @generate_altered_mp4s_command = ""
+
     @onsets_hsh = {}
-    @perfect_beat = []
+    @main_beat = main_beat.to_f
+    @path_to_video = path_to_video
 
-    num_perfect_beats =
-      (video_duration_seconds.to_f / best_approx_beat).round + 1
-
+    @perfect_beats = []
+    num_perfect_beats = (video_duration_seconds.to_f / @main_beat).round + 1
     num_perfect_beats.times do |i|
-      @perfect_beat << (best_approx_beat * i).round(2)
+      @perfect_beats << (@main_beat * i).round(2)
     end
 
-    onset_times.each { |num| @onsets_hsh[num] = nil }
+    onset_times = onset_times.split(",").map(&:to_f)
+    onset_times.each { |k,_| @onsets_hsh[k] = nil }
   end
 
   def execute
@@ -20,7 +26,12 @@ class QuantizeVideo
     set_speed_multiples
     remove_zero_onset_time
     set_speed_multiples_hash
-    create_outputs
+    write_output_commands
+    run_output_commands
+  end
+
+  def video_duration_seconds
+    `ffprobe -i #{@path_to_video} -show_format -v quiet | sed -n 's/duration=//p'`
   end
 
   def determine_quantization_diffs
@@ -29,24 +40,21 @@ class QuantizeVideo
       quantization_diffs = {}
 
       # compare each onset time to each perfect beat based on best_approx_beat
-      @perfect_beat.each do |perfect_beat|
-        quantization_diff = (perfect_beat - original_onset_time).abs
+      @perfect_beats.each do |perfect_beat|
+        quantization_diff = (perfect_beat - original_onset_time)
         sign = quantization_diff > 0 ? 1 : -1
-        quantization_diffs[quantization_diff] = sign
+        quantization_diffs[quantization_diff.abs] = sign
       end
 
       # find closest perfect beat to onset time
-      smallest_quantization_diff_with_sign =
-        quantization_diffs.min_by { |diff,sign| diff }
-
-      smallest_quantization_diff_abs = smallest_quantization_diff_with_sign[0]
+      smallest_quantization_diff_with_sign = quantization_diffs.min_by { |diff,sign| diff }
+      smallest_quantization_diff = smallest_quantization_diff_with_sign[0]
       sign = smallest_quantization_diff_with_sign[1]
 
-      quantized_onset_time =
-        original_onset_time + (smallest_quantization_diff_abs * sign)
+      quantized_onset_time = original_onset_time + (smallest_quantization_diff * sign)
 
-      if quantization_diffs[smallest_quantization_diff_abs]
-        @onsets_hsh[original_onset_time] = quantized_onset_time
+      if quantization_diffs[smallest_quantization_diff]
+        @onsets_hsh[original_onset_time] = quantized_onset_time.round(2)
       end
     end
   end
@@ -64,9 +72,10 @@ class QuantizeVideo
   end
 
   def remove_dupe_quantized_onset_times
+    min_quantization_diff = nil
+    closest_original_onset_time = nil
+
     dupe_quantized_onset_times.each do |dupe_quantized_onset_time,_|
-      min_quantization_diff = nil
-      closest_original_onset_time = nil
 
       @onsets_hsh.select do |original_onset_time,quantized_onset_time|
         if quantized_onset_time == dupe_quantized_onset_time
@@ -95,11 +104,8 @@ class QuantizeVideo
     @onsets_hsh.each_with_index do |onsets_hash,idx|
       if last_onsets_hash && idx > 0
 
-        original_onset_time_ratio  = (onsets_hash[0] - last_onsets_hash[0])
-        original_onset_time_ratio  = original_onset_time_ratio.round(2)
-
-        quantized_onset_time_ratio = (onsets_hash[1] - last_onsets_hash[1])
-        quantized_onset_time_ratio = quantized_onset_time_ratio.round(2)
+        original_onset_time_ratio  = (onsets_hash[0] - last_onsets_hash[0]).round(2)
+        quantized_onset_time_ratio = (onsets_hash[1] - last_onsets_hash[1]).round(2)
 
         speed_mult =
           (quantized_onset_time_ratio - original_onset_time_ratio).round(2)
@@ -118,53 +124,46 @@ class QuantizeVideo
     @speed_multiples_hash = {}
     @onsets_hsh.each_with_index do |onsets_hash,idx|
       original_onset_time = onsets_hash[0]
-      speed_multiples_hash[original_onset_time] = @speed_multiples[idx]
+      @speed_multiples_hash[original_onset_time] = @speed_multiples[idx]
     end
   end
 
+  def write_output_commands
+    last_onset = nil
 
-  def create_outputs
-    last_onset_and_speed_multiple = nil
     @speed_multiples_hash.each_with_index do |onset_and_speed_multiple,idx|
       onset = onset_and_speed_multiple[0]
-      mult = onset_and_speed_multiple[1]
+      mult  = onset_and_speed_multiple[1]
 
-      last_onset_and_speed_multiple = onset_and_speed_multiple
+      extraction_start_time = extraction_start_time(last_onset, idx)
+      duration = duration(onset, last_onset, idx)
 
-      extraction_start_time = extraction_start_time(onset, idx)
-      duration = duration(onset, last_onset_and_speed_multiple)
+      last_onset = onset
 
-      mezzanine_segment_file_name =
-        "./videos/mezzanine_segment_#{idx}.mp4"
-
-      extract_scene_segment(extraction_start_time, duration, segment_idx)
-      mezzanine_segment_file_name =
-        "./videos/mezzanine_segment_#{segment_idx}.mp4"
-
-      generate_altered_mp4(mezzanine_segment_file_name, idx)
-      concatenate_segments
+      write_extracted_scene_segment(extraction_start_time, duration, idx)
+      write_generate_altered_mp4(mult, idx)
     end
   end
 
-  def duration(onset, last_onset, idx)
-    dur = onset[0]
+  def duration(onset, last_onset=nil, idx)
+    dur = onset
 
     if idx > 0
-      dur -= last_onset[0]
+      dur -= last_onset
     end
 
     dur.round(2)
   end
 
-  def extraction_start_time(onset,idx)
+  def extraction_start_time(last_onset,idx)
     if idx > 0
-      if onset < 10
-        "00:00:0#{last_mult[0]}"
-      elsif onset < 60
-        "00:00:#{last_mult[0]}"
+      if last_onset < 10
+        "00:00:0#{last_onset}"
+      elsif last_onset < 60
+        "00:00:#{last_onset}"
       else
-        mm = (onset / 60).truncate
-        ss = (onset % 60).round(2)
+        mm = (last_onset / 60).truncate
+        ss = (last_onset % 60).round(2)
         "00:0#{mm}:#{ss}"
       end
     else
@@ -172,27 +171,44 @@ class QuantizeVideo
     end
   end
 
-  def mezzanine_segment_file_name(idx)
-    "./videos/mezzanine_segment_#{segment_idx}.mp4"
+  def mezzanine_segment_file_name(segment_idx)
+    if segment_idx < 10
+      segment_idx = "0" + segment_idx.to_s
+    else
+      segment_idx = segment_idx.to_s
+    end
+    "/Users/paulosetinsky/magic_music/videos/mezzanine_segment_#{segment_idx}.mp4"
   end
 
-  def extract_scene_segment(extraction_start_time, duration, segment_idx)
-    mezzanine_segment_file_name = mezzanine_segment_file_name(segment_idx)
-
-    `ffmpeg -i ./videos/humanflight.mp4 -ss #{extraction_start_time} -t \
-    #{duration} #{mezzanine_segment_file_name}`
+  def write_extracted_scene_segment(extraction_start_time, duration, segment_idx)
+    file_name = mezzanine_segment_file_name(segment_idx)
+    puts file_name
+    # command = "ffmpeg -i #{@path_to_video} -ss #{extraction_start_time} -t #{duration} #{file_name} </dev/null > /dev/null 2>&1 && "
+    command = "ffmpeg -i #{@path_to_video} -ss #{extraction_start_time} -t #{duration} #{file_name} && "
+    @extract_scene_segments_command += command
   end
 
-  def generate_altered_mp4(mezzanine_segment_file_name, segment_idx)
-    mezzanine_segment_file_name = mezzanine_segment_file_name(segment_idx)
+  def write_generate_altered_mp4(mult, segment_idx)
+    file_name = mezzanine_segment_file_name(segment_idx)
+    # command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(1.0-mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 </dev/null > /dev/null 2>&1 && "
+    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(1.0-mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
+    @generate_altered_mp4s_command += command
+  end
 
-    `ffmpeg -i #{mezzanine_segment_file_name} -filter:v \"setpts=#{(1.0-mult).\
-      round(2)}*PTS\" -an ./videos/output_segment_#{segment_idx}.mp4`
+  def run_output_commands
+    extract_segments = @extract_scene_segments_command
+    alter_segments   = @generate_altered_mp4s_command
+
+    extract_segments = extract_segments[0,extract_segments.rindex("&&")].strip
+    alter_segments   = alter_segments[0,alter_segments.rindex("&&")].strip
+
+    "extracting segments..."
+    `#{extract_segments} && #{alter_segments} && #{concatenate_segments}`
   end
 
   def concatenate_segments
-    `ffmpeg -f concat -safe 0 -i <(for f in ./videos/output_segment_*.mp4; \
-    do echo "file '$PWD/$f'"; done) -c copy ./videos/output.mp4`
+    "for f in videos/output_segment_*.mp4; do echo file $PWD/$f; done > videos/file_list.txt && \
+    ffmpeg -f concat -safe 0 -i videos/file_list.txt -c copy videos/output.mp4"
   end
 
 end

@@ -1,9 +1,10 @@
 var kdeCalculate, beatRangeTolerance, filterBeats, calculateFitness, epanechnikovKernel, kde;
 
-~onsets    = thisProcess.argv[0];
-~onsets    = ~onsets.split($,);
+~rawOnsets = thisProcess.argv[0];
+~onsets    = ~rawOnsets.split($,);
 ~onsets    = ~onsets.collect { |ot| ot.asFloat };
 ~durations = ~onsets.differentiate;
+~video = thisProcess.argv[1];
 
 // thanks to Nathan Ho and Dan Zink for this beat detection algorithm
 kdeCalculate = {
@@ -51,7 +52,7 @@ filterBeats = {
  arg beats, minBeat = 1.5, maxBeat = 3;
  var beatTimes;
  beatTimes = beats.collect { |t, i| abs(t - beats.copyToEnd(i + 1)) }.flat;
- beatTimes.flatten.select { |t| (( t >= minBeat) && (t <= maxBeat));};
+ beatTimes.flatten.select  { |t| (( t >= minBeat) && (t <= maxBeat)); };
 };
 
 calculateFitness = {
@@ -63,5 +64,13 @@ epanechnikovKernel = { |n|
  0.75 * (1 - (n * n));
 };
 
-/*~mainBeat = kdeCalculate.(~onsets);*/
-~mainBeat = 3.2;
+~mainBeat = kdeCalculate.(~onsets);
+
+n = ("cd /Users/paulosetinsky/magic_music && ruby execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;
+t = true;
+while({ t == true }) {
+  if( n.pidRunning == false ) {
+    this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
+    t = false;
+  }
+};

@@ -51,7 +51,7 @@ SynthDef(\SOStom,
 );
 
 (
-SynthDef(\mario, { |out, amp=0.2, freq=440|
+SynthDef(\mario, { |out, amp=0.1, freq=440|
  var snd;
  snd = LFPulse.ar(freq)!1;
  snd = snd * EnvGen.ar(Env.linen(0.001, 0.1, 0.03), doneAction:2);

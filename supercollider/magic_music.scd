@@ -3,21 +3,23 @@ s.boot;
 
 s.waitForBoot({
 
- this.executeFile("/Users/paulosetinsky/magic_music/supercollider/beat_calculate.scd");
  this.executeFile("/Users/paulosetinsky/magic_music/supercollider/instruments.scd");
- f = thisProcess.argv[2];
- g = thisProcess.argv[3];
- m = SimpleMIDIFile.read(f);
- n = SimpleMIDIFile.read(g);
- i = 0;
 
+ ~mainBeat.postln;
+
+ /*~midiA = thisProcess.argv[2];
+ ~midiB = thisProcess.argv[3];
+ ~melodyA = SimpleMIDIFile.read(~midiA);
+ ~melodyB = SimpleMIDIFile.read(~midiB);*/
+
+ i = 0;
  r = Routine({
   loop {
    if(i<~durations.size) {
-    var waitTimeI = ~durations[i];
-     /*Synth(\first,[\adder,51,\numharm,2,\repeats,1,\roomsize,500,\revtime,20]);*/
-     Synth(\mario);
-     waitTimeI.wait;
+    /*var waitTimeI = ~durations[i];*/
+     /*Synth(\mario);*/
+     /*waitTimeI.wait;*/
+     ~mainBeat.wait;
     i=i+1;
    };
   };
@@ -31,7 +33,12 @@ s.waitForBoot({
   \freq, 50
  ).play(TempoClock.new(~mainBeat/2.0));
 
- /*m.p(\mario).play(TempoClock.new(~mainBeat/4.0));*/
+ Pbind(
+  \instrument, "mario",
+  \amp, 0.2,
+ ).play(TempoClock.new(~mainBeat/4.0));
+
+ /*~melodyA.p(\mario).play(TempoClock.new(~mainBeat/4.0));*/
 
  /*(
   (
@@ -58,12 +65,11 @@ s.waitForBoot({
  );*/
 
  /*~onsets[~onsets.size/2].wait(TempoClock.new(~mainBeat));*/
- /*n.p(\mario).play(TempoClock.new(~mainBeat/4.0));*/
+ /*~melodyB.p(\mario).play(TempoClock.new(~mainBeat/4.0));*/
 
  r.play;
 
- ~video = thisProcess.argv[1];
- ("ffplay -i -autoexit -showmode 0 -an " ++ ~video ).unixCmd;
+ ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
 });
 
 );

@@ -8,7 +8,9 @@
 ---are the beats they suggest actually the best?
 
 6. mutate video speed around approximate beat
----v1, simply change speed of each chunk so that it matches
+---v1, simply change speed of each segment so that it matches
+---have video play to the end (currently missing last segment)
+---drop drums intermittently with `durations.size` in magic_music.scd
 
 7. create music around video, generating melodies with magenta [WIP]
 ---limitations:
@@ -26,5 +28,9 @@
 ---combined video with music (without video's original sound)
 ---mix of video with music and original audio
 
-### idea to pursue: drum drops exactly with last scene change because of "if(i<~durations.size) {" in magic_music.scd
-### ...use this approach to leave beats/melodies out, bring them back in, etc.
+***
+gen onsets from mezzanine vid (bash/ffmpeg)
+use onsets to find mainbeat (sc)
+use mainbeat to quantize video (pass onsets, mainbeat and filename to rb)
+regenerate onsets (???)
+generate music to play with quantized vid (sc with new video)

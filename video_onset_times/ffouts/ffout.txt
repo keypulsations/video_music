@@ -10,55 +10,69 @@ ffmpeg version 3.1.5 Copyright (c) 2000-2016 the FFmpeg developers
   libswscale      4.  1.100 /  4.  1.100
   libswresample   2.  1.100 /  2.  1.100
   libpostproc    54.  0.100 / 54.  0.100
-Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'videos/output.mp4':
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'videos/chimp.mp4':
   Metadata:
-    major_brand     : isom
-    minor_version   : 512
-    compatible_brands: isomiso2avc1mp41
-    encoder         : Lavf57.41.100
-  Duration: 00:01:44.68, start: 0.000000, bitrate: 791 kb/s
-    Stream #0:0(und): Video: h264 (High) (avc1 / 0x31637661), yuv420p, 1280x720 [SAR 1:1 DAR 16:9], 788 kb/s, 24.98 fps, 25 tbr, 12800 tbn, 50 tbc (default)
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: mp42mp41isomavc1
+    creation_time   : 2015-05-12 20:21:03
+  Duration: 00:00:58.35, start: 0.000000, bitrate: 405 kb/s
+    Stream #0:0(und): Video: h264 (Constrained Baseline) (avc1 / 0x31637661), yuv420p(tv, smpte170m), 480x270 [SAR 1:1 DAR 16:9], 291 kb/s, 23.98 fps, 23.98 tbr, 24k tbn, 47.95 tbc (default)
     Metadata:
-      handler_name    : VideoHandler
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] config in time_base: 1/12800, frame_rate: 25/1
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] config out time_base: 0/0, frame_rate: 0/0
-[null @ 0x7f9b3b806600] Using AVStream.codec to pass codec parameters to muxers is deprecated, use AVStream.codecpar instead.
+      creation_time   : 2015-05-12 20:21:03
+      handler_name    : L-SMASH Video Handler
+      encoder         : AVC Coding
+    Stream #0:1(und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 112 kb/s (default)
+    Metadata:
+      creation_time   : 2015-05-12 20:21:03
+      handler_name    : L-SMASH Audio Handler
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] config in time_base: 1/24000, frame_rate: 24000/1001
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] config out time_base: 0/0, frame_rate: 0/0
+[null @ 0x7fe4f20b0c00] Using AVStream.codec to pass codec parameters to muxers is deprecated, use AVStream.codecpar instead.
+    Last message repeated 1 times
 Output #0, null, to 'pipe:':
   Metadata:
-    major_brand     : isom
-    minor_version   : 512
-    compatible_brands: isomiso2avc1mp41
+    major_brand     : mp42
+    minor_version   : 0
+    compatible_brands: mp42mp41isomavc1
     encoder         : Lavf57.41.100
-    Stream #0:0(und): Video: wrapped_avframe, rgb24, 1280x720 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 25 fps, 25 tbn, 25 tbc (default)
+    Stream #0:0(und): Video: wrapped_avframe, rgb24, 480x270 [SAR 1:1 DAR 16:9], q=2-31, 200 kb/s, 23.98 fps, 23.98 tbn, 23.98 tbc (default)
     Metadata:
-      handler_name    : VideoHandler
+      creation_time   : 2015-05-12 20:21:03
+      handler_name    : L-SMASH Video Handler
       encoder         : Lavc57.48.101 wrapped_avframe
+    Stream #0:1(und): Audio: pcm_s16le, 48000 Hz, stereo, s16, 1536 kb/s (default)
+    Metadata:
+      creation_time   : 2015-05-12 20:21:03
+      handler_name    : L-SMASH Audio Handler
+      encoder         : Lavc57.48.101 pcm_s16le
 Stream mapping:
   Stream #0:0 -> #0:0 (h264 (native) -> wrapped_avframe (native))
+  Stream #0:1 -> #0:1 (aac (native) -> pcm_s16le (native))
 Press [q] to stop, [?] for help
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   0 pts:  53760 pts_time:4.2     pos:   477749 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:A1375BBE plane_checksum:[A1375BBE] mean:[107 ] stdev:[55.8 ]
-frame=    1 fps=0.0 q=-0.0 size=N/A time=00:00:04.24 bitrate=N/A speed=8.46x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   1 pts:  97280 pts_time:7.6     pos:   766342 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:0FA1D0E2 plane_checksum:[0FA1D0E2] mean:[139 ] stdev:[48.7 ]
-frame=    2 fps=2.0 q=-0.0 size=N/A time=00:00:07.64 bitrate=N/A speed=7.59x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   2 pts: 165888 pts_time:12.96   pos:  1537134 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:BCD89A25 plane_checksum:[BCD89A25] mean:[160 ] stdev:[45.9 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   3 pts: 205824 pts_time:16.08   pos:  1873250 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:45650E8F plane_checksum:[45650E8F] mean:[126 ] stdev:[43.6 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   4 pts: 247808 pts_time:19.36   pos:  2274158 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:B7C59D23 plane_checksum:[B7C59D23] mean:[123 ] stdev:[53.9 ]
-frame=    5 fps=3.3 q=-0.0 size=N/A time=00:00:19.40 bitrate=N/A speed=12.9x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   5 pts: 289792 pts_time:22.64   pos:  2595261 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:AC7BCD6B plane_checksum:[AC7BCD6B] mean:[158 ] stdev:[50.0 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   6 pts: 329728 pts_time:25.76   pos:  3015092 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:40B817CA plane_checksum:[40B817CA] mean:[142 ] stdev:[58.0 ]
-frame=    7 fps=3.5 q=-0.0 size=N/A time=00:00:25.80 bitrate=N/A speed=12.9x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   7 pts: 371712 pts_time:29.04   pos:  3364962 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:F5F3D37E plane_checksum:[F5F3D37E] mean:[116 ] stdev:[12.4 ]
-frame=    8 fps=3.2 q=-0.0 size=N/A time=00:00:29.08 bitrate=N/A speed=11.6x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   8 pts: 451584 pts_time:35.28   pos:  4181411 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:F0CDE1B8 plane_checksum:[F0CDE1B8] mean:[142 ] stdev:[50.8 ]
-frame=    9 fps=3.0 q=-0.0 size=N/A time=00:00:35.32 bitrate=N/A speed=11.7x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:   9 pts: 575488 pts_time:44.96   pos:  4781235 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:5E91046D plane_checksum:[5E91046D] mean:[196 ] stdev:[43.3 ]
-frame=   10 fps=2.8 q=-0.0 size=N/A time=00:00:45.00 bitrate=N/A speed=12.8x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  10 pts: 649728 pts_time:50.76   pos:  5050891 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:ABDC1CEA plane_checksum:[ABDC1CEA] mean:[132 ] stdev:[50.8 ]
-frame=   11 fps=2.7 q=-0.0 size=N/A time=00:00:50.80 bitrate=N/A speed=12.7x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  11 pts: 717824 pts_time:56.08   pos:  5596369 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:C5F011A6 plane_checksum:[C5F011A6] mean:[134 ] stdev:[49.3 ]
-frame=   12 fps=2.7 q=-0.0 size=N/A time=00:00:56.12 bitrate=N/A speed=12.4x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  12 pts: 820224 pts_time:64.08   pos:  6615415 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:E3B858CD plane_checksum:[E3B858CD] mean:[155 ] stdev:[62.3 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  13 pts: 856064 pts_time:66.88   pos:  6883342 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:08AEBFE7 plane_checksum:[08AEBFE7] mean:[146 ] stdev:[66.5 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  14 pts: 889856 pts_time:69.52   pos:  7137238 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:902D575E plane_checksum:[902D575E] mean:[147 ] stdev:[45.0 ]
-frame=   15 fps=3.0 q=-0.0 size=N/A time=00:01:09.56 bitrate=N/A speed=13.9x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  15 pts: 933376 pts_time:72.92   pos:  7549337 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:037B8708 plane_checksum:[037B8708] mean:[129 ] stdev:[23.8 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  16 pts: 975360 pts_time:76.2    pos:  7864780 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:2C5FA5F2 plane_checksum:[2C5FA5F2] mean:[154 ] stdev:[54.8 ]
-frame=   17 fps=3.1 q=-0.0 size=N/A time=00:01:16.24 bitrate=N/A speed=13.8x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  17 pts:1017344 pts_time:79.48   pos:  8132161 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:697F17C6 plane_checksum:[697F17C6] mean:[168 ] stdev:[30.2 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  18 pts:1037312 pts_time:81.04   pos:  8300824 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:20AE82C9 plane_checksum:[20AE82C9] mean:[221 ] stdev:[35.2 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  19 pts:1057280 pts_time:82.6    pos:  8392561 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:8952CD88 plane_checksum:[8952CD88] mean:[141 ] stdev:[65.1 ]
-[Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  20 pts:1076736 pts_time:84.12   pos:  8540230 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:7950F839 plane_checksum:[7950F839] mean:[133 ] stdev:[45.1 ]
-frame=   21 fps=3.5 q=-0.0 size=N/A time=00:01:24.16 bitrate=N/A speed=  14x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  21 pts:1133568 pts_time:88.56   pos:  9024986 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:E50D0D56 plane_checksum:[E50D0D56] mean:[134 ] stdev:[38.1 ]
-frame=   22 fps=3.4 q=-0.0 size=N/A time=00:01:28.60 bitrate=N/A speed=13.6x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  22 pts:1295872 pts_time:101.24  pos:  9964473 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:41B63690 plane_checksum:[41B63690] mean:[155 ] stdev:[66.9 ]
-frame=   23 fps=3.3 q=-0.0 size=N/A time=00:01:41.28 bitrate=N/A speed=14.4x    [Parsed_showinfo_1 @ 0x7f9b3ad22940] n:  23 pts:1337856 pts_time:104.52  pos: 10304082 fmt:rgb24 sar:1/1 s:1280x720 i:P iskey:1 type:I checksum:06FF2D73 plane_checksum:[06FF2D73] mean:[204 ] stdev:[52.9 ]
-frame=   24 fps=3.4 q=-0.0 Lsize=N/A time=00:01:44.56 bitrate=N/A speed=14.8x    
-video:11kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   0 pts:  90090 pts_time:3.75375 pos:    82662 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:22910C95 plane_checksum:[22910C95] mean:[105 ] stdev:[61.9 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   1 pts: 203203 pts_time:8.46679 pos:   368075 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:389B3F04 plane_checksum:[389B3F04] mean:[142 ] stdev:[56.2 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   2 pts: 265265 pts_time:11.0527 pos:   496696 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:2EB9C101 plane_checksum:[2EB9C101] mean:[120 ] stdev:[54.2 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   3 pts: 329329 pts_time:13.722  pos:   652081 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:1770E9B4 plane_checksum:[1770E9B4] mean:[131 ] stdev:[50.3 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   4 pts: 465465 pts_time:19.3944 pos:   968389 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:CBA4950A plane_checksum:[CBA4950A] mean:[104 ] stdev:[67.3 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   5 pts: 542542 pts_time:22.6059 pos:  1144681 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:B58472B6 plane_checksum:[B58472B6] mean:[121 ] stdev:[69.1 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   6 pts: 659659 pts_time:27.4858 pos:  1420307 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:2B6FC141 plane_checksum:[2B6FC141] mean:[122 ] stdev:[58.5 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   7 pts: 794794 pts_time:33.1164 pos:  1747636 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:AF34CC28 plane_checksum:[AF34CC28] mean:[65 ] stdev:[62.0 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   8 pts: 798798 pts_time:33.2832 pos:  1755842 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:ED7C0927 plane_checksum:[ED7C0927] mean:[144 ] stdev:[101.8 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:   9 pts: 799799 pts_time:33.325  pos:  1758857 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:69958AAA plane_checksum:[69958AAA] mean:[100 ] stdev:[72.9 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  10 pts: 802802 pts_time:33.4501 pos:  1770127 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:BB98F420 plane_checksum:[BB98F420] mean:[107 ] stdev:[50.2 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  11 pts: 813813 pts_time:33.9089 pos:  1807538 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:838FF42B plane_checksum:[838FF42B] mean:[149 ] stdev:[82.0 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  12 pts: 814814 pts_time:33.9506 pos:  1810044 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:900345EF plane_checksum:[900345EF] mean:[163 ] stdev:[83.4 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  13 pts: 817817 pts_time:34.0757 pos:  1832522 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:D7B376DD plane_checksum:[D7B376DD] mean:[191 ] stdev:[72.0 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  14 pts: 819819 pts_time:34.1591 pos:  1837051 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:4C124B3B plane_checksum:[4C124B3B] mean:[75 ] stdev:[56.4 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  15 pts: 821821 pts_time:34.2425 pos:  1842099 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:2EF46AD3 plane_checksum:[2EF46AD3] mean:[179 ] stdev:[80.3 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  16 pts: 822822 pts_time:34.2843 pos:  1844161 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:59A51A0B plane_checksum:[59A51A0B] mean:[160 ] stdev:[63.9 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  17 pts: 824824 pts_time:34.3677 pos:  1848548 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:90B20B32 plane_checksum:[90B20B32] mean:[59 ] stdev:[49.1 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  18 pts: 854854 pts_time:35.6189 pos:  1904088 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:29300606 plane_checksum:[29300606] mean:[102 ] stdev:[80.6 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  19 pts:1072071 pts_time:44.6696 pos:  2348716 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:845DE76A plane_checksum:[845DE76A] mean:[86 ] stdev:[60.9 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  20 pts:1110109 pts_time:46.2545 pos:  2453437 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:P checksum:DE2C86C6 plane_checksum:[DE2C86C6] mean:[100 ] stdev:[90.3 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  21 pts:1163162 pts_time:48.4651 pos:  2595900 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:I checksum:C2DE3CE9 plane_checksum:[C2DE3CE9] mean:[73 ] stdev:[59.0 ]
+[Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  22 pts:1167166 pts_time:48.6319 pos:  2604532 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:0 type:P checksum:3AD2324D plane_checksum:[3AD2324D] mean:[68 ] stdev:[54.9 ]
+frame=   23 fps=0.0 q=-0.0 size=N/A time=00:00:50.13 bitrate=N/A speed= 100x    [Parsed_showinfo_1 @ 0x7fe4f1c01880] n:  23 pts:1292291 pts_time:53.8455 pos:  2855298 fmt:rgb24 sar:1/1 s:480x270 i:P iskey:1 type:I checksum:2E7210A8 plane_checksum:[2E7210A8] mean:[3 ] stdev:[20.9 ]
+frame=   24 fps=0.0 q=-0.0 Lsize=N/A time=00:00:58.34 bitrate=N/A speed= 102x    
+video:11kB audio:10940kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
