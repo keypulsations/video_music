@@ -12,20 +12,21 @@ s.waitForBoot({
  ~melodyA = SimpleMIDIFile.read(~midiA);
  ~melodyB = SimpleMIDIFile.read(~midiB);*/
 
- i = 0;
+ /*i = 0;
  r = Routine({
   loop {
    if(i<~durations.size) {
-    /*var waitTimeI = ~durations[i];*/
-     /*Synth(\mario);*/
-     /*waitTimeI.wait;*/
-     ~mainBeat.wait;
+    var waitTimeI = ~durations[i];
+    Synth(\mario, [\freq, 300]);
+    waitTimeI.wait;
     i=i+1;
    };
   };
- });
+ });*/
 
  /*~durations[0].wait(TempoClock.new(~mainBeat));*/
+/*r.play;*/
+
 
  Pbind(
   \instrument, "SOSkick",
@@ -36,7 +37,9 @@ s.waitForBoot({
  Pbind(
   \instrument, "mario",
   \amp, 0.2,
+  \freq, 600,
  ).play(TempoClock.new(~mainBeat/4.0));
+ ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
 
  /*~melodyA.p(\mario).play(TempoClock.new(~mainBeat/4.0));*/
 
@@ -67,9 +70,6 @@ s.waitForBoot({
  /*~onsets[~onsets.size/2].wait(TempoClock.new(~mainBeat));*/
  /*~melodyB.p(\mario).play(TempoClock.new(~mainBeat/4.0));*/
 
- r.play;
-
- ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
 });
 
 );

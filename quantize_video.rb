@@ -39,7 +39,7 @@ class QuantizeVideo
     @onsets_hsh.each do |original_onset_time,_|
       quantization_diffs = {}
 
-      # compare each onset time to each perfect beat based on best_approx_beat
+      # compare the onset time to each perfect beat based on best_approx_beat
       @perfect_beats.each do |perfect_beat|
         quantization_diff = (perfect_beat - original_onset_time)
         sign = quantization_diff > 0 ? 1 : -1
@@ -61,7 +61,7 @@ class QuantizeVideo
 
   def dupe_counter_hash
     counter_hash = Hash.new(0)
-    @onsets_hsh.each do |original_onset_time,quantized_onset_time|
+    @onsets_hsh.each do |_,quantized_onset_time|
       counter_hash[quantized_onset_time] += 1
     end
     counter_hash
@@ -72,47 +72,48 @@ class QuantizeVideo
   end
 
   def remove_dupe_quantized_onset_times
-    min_quantization_diff = nil
-    closest_original_onset_time = nil
-
     dupe_quantized_onset_times.each do |dupe_quantized_onset_time,_|
 
-      @onsets_hsh.select do |original_onset_time,quantized_onset_time|
+      min_quantization_diff = nil
+      closest_original_onset_time = nil
+
+      @onsets_hsh.each do |original_onset_time,quantized_onset_time|
         if quantized_onset_time == dupe_quantized_onset_time
           quantization_diff = (original_onset_time - quantized_onset_time).abs
-          if !min_quantization_diff || quantization_diff < min_quantization_diff
+          if min_quantization_diff.nil? || quantization_diff < min_quantization_diff
             min_quantization_diff = quantization_diff
             closest_original_onset_time = original_onset_time
           end
         end
       end
 
-      @onsets_hsh =
-        @onsets_hsh.delete_if do |original_onset_time,quantized_onset_time|
-          original_onset_time != closest_original_onset_time &&
-          quantized_onset_time == dupe_quantized_onset_time
-        end
+      @onsets_hsh.delete_if do |original_onset_time,quantized_onset_time|
+        original_onset_time != closest_original_onset_time &&
+        quantized_onset_time == dupe_quantized_onset_time
+      end
     end
   end
 
   def set_speed_multiples
     @speed_multiples = []
-    @onsets_hsh[0] = 0
+    @onsets_hsh[0.0] = 0.0
     @onsets_hsh = @onsets_hsh.sort.to_h
 
-    last_onsets_hash = nil
-    @onsets_hsh.each_with_index do |onsets_hash,idx|
-      if last_onsets_hash && idx > 0
+    last_onset_pair = nil
+    @onsets_hsh.each_with_index do |current_onset_pair,idx|
+      if idx > 0
+        current_original_onset = current_onset_pair[0]
+        last_original_onset = last_onset_pair[0]
+        current_quantized_onset = current_onset_pair[1]
+        last_quantized_onset = last_onset_pair[1]
 
-        original_onset_time_ratio  = (onsets_hash[0] - last_onsets_hash[0]).round(2)
-        quantized_onset_time_ratio = (onsets_hash[1] - last_onsets_hash[1]).round(2)
+        original_segment_duration  = (current_original_onset - last_original_onset).round(2)
+        quantized_segment_duration = (current_quantized_onset - last_quantized_onset).round(2)
 
-        speed_mult =
-          (quantized_onset_time_ratio - original_onset_time_ratio).round(2)
-
+        speed_mult = (quantized_segment_duration / original_segment_duration).round(2)
         @speed_multiples << speed_mult
       end
-      last_onsets_hash = onsets_hash
+      last_onset_pair = current_onset_pair
     end
   end
 
@@ -134,12 +135,9 @@ class QuantizeVideo
     @speed_multiples_hash.each_with_index do |onset_and_speed_multiple,idx|
       onset = onset_and_speed_multiple[0]
       mult  = onset_and_speed_multiple[1]
-
       extraction_start_time = extraction_start_time(last_onset, idx)
       duration = duration(onset, last_onset, idx)
-
       last_onset = onset
-
       write_extracted_scene_segment(extraction_start_time, duration, idx)
       write_generate_altered_mp4(mult, idx)
     end
@@ -191,7 +189,7 @@ class QuantizeVideo
   def write_generate_altered_mp4(mult, segment_idx)
     file_name = mezzanine_segment_file_name(segment_idx)
     # command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(1.0-mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 </dev/null > /dev/null 2>&1 && "
-    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(1.0-mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
+    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
     @generate_altered_mp4s_command += command
   end
 

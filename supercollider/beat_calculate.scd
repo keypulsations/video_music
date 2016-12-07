@@ -66,11 +66,15 @@ epanechnikovKernel = { |n|
 
 ~mainBeat = kdeCalculate.(~onsets);
 
-n = ("cd /Users/paulosetinsky/magic_music && ruby execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;
+/*n = ("cd /Users/paulosetinsky/magic_music && ruby execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;*/
+
+/*
 t = true;
 while({ t == true }) {
   if( n.pidRunning == false ) {
     this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
     t = false;
   }
-};
+};*/
+
+this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
