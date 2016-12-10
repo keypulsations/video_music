@@ -10,14 +10,12 @@ onsetTimesString="$( printf "${separator}%s" "${onsetTimesArray[@]}" )"
 onsetTimesString="${onsetTimesString:${#separator}}" # remove leading separatorZ
 
 # GENERATE MAGENTA MELODIES
-# source activate magenta
-# cd /Users/paulosetinsky/ai/magenta/magenta
-# outputDir=/Users/paulosetinsky/ai/magenta/magenta/tmp/generated
-# bash RunMe.sh ${outputDir}
-# genMels=(${outputDir}/*)
+source activate magenta
+cd /Users/paulosetinsky/ai/magenta/magenta
+outputDir=/Users/paulosetinsky/ai/magenta/magenta/tmp/generated
+bash RunMe.sh ${outputDir}
+genMels=(${outputDir}/*)
 
 # CALCULATE BEST APPROXIMATE BEAT IN SUPERCOLLIDER
 cd /Applications/SuperCollider/SuperCollider.app/Contents/MacOS
-exec ./sclang ${root}/supercollider/beat_calculate.scd "${onsetTimesString}" ${root}/$1
-
-#${genMels[@]: -1} ${genMels[@]: -2}
+exec ./sclang ${root}/supercollider/beat_calculate.scd "${onsetTimesString}" ${root}/$1 ${genMels[@]: -1} ${genMels[@]: -2}

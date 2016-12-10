@@ -13,6 +13,7 @@ class QuantizeVideo
     @perfect_beats = []
     num_perfect_beats = (video_duration_seconds.to_f / @main_beat).round + 1
     num_perfect_beats.times do |i|
+      # @perfect_beats << (@main_beat * i).round(2)
       @perfect_beats << (@main_beat * i).round(2)
     end
 
@@ -28,6 +29,10 @@ class QuantizeVideo
     set_speed_multiples_hash
     write_output_commands
     run_output_commands
+
+    puts @extract_scene_segments_command
+    puts ''
+    puts @generate_altered_mp4s_command
   end
 
   def video_duration_seconds
@@ -54,7 +59,7 @@ class QuantizeVideo
       quantized_onset_time = original_onset_time + (smallest_quantization_diff * sign)
 
       if quantization_diffs[smallest_quantization_diff]
-        @onsets_hsh[original_onset_time] = quantized_onset_time.round(2)
+        @onsets_hsh[original_onset_time] = quantized_onset_time
       end
     end
   end
@@ -107,10 +112,10 @@ class QuantizeVideo
         current_quantized_onset = current_onset_pair[1]
         last_quantized_onset = last_onset_pair[1]
 
-        original_segment_duration  = (current_original_onset - last_original_onset).round(2)
-        quantized_segment_duration = (current_quantized_onset - last_quantized_onset).round(2)
+        original_segment_duration  = (current_original_onset - last_original_onset)
+        quantized_segment_duration = (current_quantized_onset - last_quantized_onset)
 
-        speed_mult = (quantized_segment_duration / original_segment_duration).round(2)
+        speed_mult = (quantized_segment_duration / original_segment_duration)
         @speed_multiples << speed_mult
       end
       last_onset_pair = current_onset_pair
@@ -131,16 +136,21 @@ class QuantizeVideo
 
   def write_output_commands
     last_onset = nil
-
+    durs = []
     @speed_multiples_hash.each_with_index do |onset_and_speed_multiple,idx|
       onset = onset_and_speed_multiple[0]
       mult  = onset_and_speed_multiple[1]
       extraction_start_time = extraction_start_time(last_onset, idx)
       duration = duration(onset, last_onset, idx)
+
+      durs << ((durs[idx-1] || 0) + duration * mult).round(2)
+
       last_onset = onset
-      write_extracted_scene_segment(extraction_start_time, duration, idx)
+
+      write_extracted_scene_segment(extraction_start_time, duration, idx, mult, last_onset)
       write_generate_altered_mp4(mult, idx)
     end
+    puts durs
   end
 
   def duration(onset, last_onset=nil, idx)
@@ -150,7 +160,7 @@ class QuantizeVideo
       dur -= last_onset
     end
 
-    dur.round(2)
+    dur
   end
 
   def extraction_start_time(last_onset,idx)
@@ -161,7 +171,7 @@ class QuantizeVideo
         "00:00:#{last_onset}"
       else
         mm = (last_onset / 60).truncate
-        ss = (last_onset % 60).round(2)
+        ss = (last_onset % 60)
         "00:0#{mm}:#{ss}"
       end
     else
@@ -178,18 +188,16 @@ class QuantizeVideo
     "/Users/paulosetinsky/magic_music/videos/mezzanine_segment_#{segment_idx}.mp4"
   end
 
-  def write_extracted_scene_segment(extraction_start_time, duration, segment_idx)
+  def write_extracted_scene_segment(extraction_start_time, duration, segment_idx,mult,last_onset)
     file_name = mezzanine_segment_file_name(segment_idx)
-    puts file_name
-    # command = "ffmpeg -i #{@path_to_video} -ss #{extraction_start_time} -t #{duration} #{file_name} </dev/null > /dev/null 2>&1 && "
     command = "ffmpeg -i #{@path_to_video} -ss #{extraction_start_time} -t #{duration} #{file_name} && "
     @extract_scene_segments_command += command
   end
 
   def write_generate_altered_mp4(mult, segment_idx)
     file_name = mezzanine_segment_file_name(segment_idx)
-    # command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(1.0-mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 </dev/null > /dev/null 2>&1 && "
-    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(mult).round(2)}*PTS\" -an /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
+    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(mult)}*PTS\" -an \
+      /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
     @generate_altered_mp4s_command += command
   end
 
