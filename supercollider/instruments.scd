@@ -71,30 +71,32 @@ metadata: (
 )
 ).add;
 
-(
-// harmonic zither
-// use mouse to strum strings
-{
- var pitch, mousex, mousey, out, triggerSpacing, panSpacing;
- // harmonic series
- pitch = [ 50, 53.86, 57.02, 59.69, 62, 64.04, 65.86, 67.51, 69.02, 71.69, 72.88, 74 ];
- mousex = MouseX.kr;
- mousey = MouseY.kr;
- triggerSpacing = 0.5 / (pitch.size - 1);
- panSpacing = 1.5 / (pitch.size - 1);
- out = Mix.arFill(pitch.size, { arg i;
-  var trigger, pluck, period, string;
-  // place trigger points from 0.25 to 0.75
-  trigger = HPZ1.kr(mousex > (0.25 + (i * triggerSpacing))).abs;
-  pluck = PinkNoise.ar(Decay.kr(trigger, 0.05));
-  period = pitch.at(i).midicps.reciprocal;
-  string = CombL.ar(pluck, period, period, 8);
-  Pan2.ar(string, i * panSpacing - 0.75);
- });
- LPF.ar(out, 12000);
- LeakDC.ar(out);
-}.play;
-);
+SynthDef(\cymbal, {
+ arg out=0, baseFreq = 300, time = 250, amp=0.1;
+ //var freqs = [baseFreq, baseFreq*1.3420, baseFreq*1.2312, baseFreq*1.6532, baseFreq*1.9523, baseFreq*2.1523];
+ //var freqs = [78.6, 140.44, 123.87, 219.4, 787.5, 531.3];
+ //var freqs = [205.35, 254.29, 294.03, 304.41, 369.64, 522.71];
+ var freqs = [205.35, 304.41, 369.64, 522.71, 540.54, 812.21];
+ var signal, pulseEnv;
+
+ pulseEnv = EnvGen.ar(Env.new([1.0, 0.6], [time], [-0.5]), timeScale:(1/1000));
+ signal = Mix.new(LFPulse.ar(freqs * 4.09));
+ signal = (BinaryOpUGen('==', signal, 6.0) * 0.6) + (BinaryOpUGen('==', signal, 2.0) * 0.2) + (BinaryOpUGen('==', signal, 1.0) * 0.9); // XOR
+ signal = (signal * pulseEnv) + (Mix.new(LFPulse.ar(freqs, width:0.55)) * 0.9);
+ signal = RLPF.ar(signal, 7000, 0.6);
+ signal = RHPF.ar(signal, 6800, 1.5);
+ signal = RHPF.ar(signal, 6800, 1.5);
+ signal = RHPF.ar(signal, 1200, 1.5);
+ signal = signal + FreeVerb.ar(signal);
+ signal = signal * EnvGen.ar(Env.new([0, 1, 0.4, 0, 0], [2, time, 50, 500], [0, -0.5, 0, -50]), timeScale:(1/1000), doneAction:2);
+ signal = [signal, DelayN.ar(signal, 0.005, 0.005)];
+ OffsetOut.ar(out, signal*4*amp);
+},
+metadata: (
+ credit: "Published on sc-users 2007-08-25 by Ryan Brown",
+ tags: ['808', \hihat, \percussion, \cymbal]
+)
+).add;
 
 /*(
 b = Task({
@@ -112,8 +114,26 @@ delta.yield;
 }).play(quant:TempoClock.default.beats+1.0);
 )*/
 
+/*(
+{
+var freq, numparts;
+numparts = 50;
+freq = SinOsc.kr(Array.fill(numparts, {Rand(0.05, 0.2)}),
+Array.fill(numparts, {Rand(0, 1.0)})).range(1000, 3000);
+LeakDC.ar(
+Pan2.ar(
+Pluck.ar(
+WhiteNoise.ar(0.1).dup(numparts),
+Impulse.kr(Array.fill(numparts, {Rand(10, 12)})),
+100.reciprocal, freq.reciprocal, 2, Rand(0.01, 0.2), mul: 1),
+Array.fill(numparts, {Rand.new(-1.0, 1.0)}))
+.sum
+);
+}.play(s);
+);*/
+
 (
-SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.2, coef = 0.1;
+SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.35, coef = 0.6;
 
  var env, snd;
  env = EnvGen.kr(Env.linen(0, decay, 0), doneAction: 2);
@@ -123,14 +143,14 @@ SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.2, coef = 0.1;
  snd = Pluck.ar(
   in: WhiteNoise.ar(amp),
   trig: Impulse.kr(0),
-  maxdelaytime: 0.1,
+  maxdelaytime: 0.25,
   delaytime: freq.reciprocal,
   decaytime: decay,
   coef: coef
  );
 
- snd = snd.clip(-0.1,0.1);
- snd = FreeVerb.ar(snd, 0.5, 0.33, 0.15);
+ snd = snd.distort;
+ snd = FreeVerb.ar(snd, 0.4, 0.3, 0.3);
 
  Out.ar(0, [snd, snd]*4);
 }).add;

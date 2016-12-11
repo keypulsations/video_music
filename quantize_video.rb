@@ -13,7 +13,6 @@ class QuantizeVideo
     @perfect_beats = []
     num_perfect_beats = (video_duration_seconds.to_f / @main_beat).round + 1
     num_perfect_beats.times do |i|
-      # @perfect_beats << (@main_beat * i).round(2)
       @perfect_beats << (@main_beat * i).round(2)
     end
 
@@ -28,11 +27,13 @@ class QuantizeVideo
     remove_zero_onset_time
     set_speed_multiples_hash
     write_output_commands
+    write_quantized_onsets
     run_output_commands
 
-    puts @extract_scene_segments_command
-    puts ''
-    puts @generate_altered_mp4s_command
+    # puts @extract_scene_segments_command
+    # puts ''
+    # puts @generate_altered_mp4s_command
+
   end
 
   def video_duration_seconds
@@ -151,6 +152,14 @@ class QuantizeVideo
       write_generate_altered_mp4(mult, idx)
     end
     puts durs
+  end
+
+  def write_quantized_onsets
+    quantized_onset_times_str = ''
+    @onsets_hsh.each { |_,v| quantized_onset_times_str << "#{v}," }
+    file_path = "/Users/paulosetinsky/magic_music/video_onset_times/quantized_onset_times.txt"
+    quantized_onset_times_str = quantized_onset_times_str.chomp(',')
+    File.open(file_path, 'w') { |file| file.write(quantized_onset_times_str) }
   end
 
   def duration(onset, last_onset=nil, idx)

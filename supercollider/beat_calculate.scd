@@ -6,7 +6,7 @@ var kdeCalculate, beatRangeTolerance, filterBeats, calculateFitness, epanechniko
 ~durations = ~onsets.differentiate;
 ~video = thisProcess.argv[1];
 
-// thanks to Nathan Ho and Dan Zink for this beat detection algorithm
+// thanks to Nathan Ho and Dan Zink for help on this beat detection algorithm
 kdeCalculate = {
  arg beats, guess = 2, tolerance = 2.5, binSize = 0.1, kernel = epanechnikovKernel, kernelWidth = 2;
  var beatTimes, peakKernel, kernelBeats, beatFit, kernelDiff = binSize * kernelWidth, minBeat, maxBeat;
@@ -74,14 +74,22 @@ epanechnikovKernel = { |n|
 "main beat: ".postln;
 ~mainBeat.postln;
 
-/*n = ("cd /Users/paulosetinsky/magic_music && ruby execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;*/
+n = ("cd /Users/paulosetinsky/magic_music && ruby execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;
 
-/*t = true;
+t = true;
 while({ t == true }) {
   if( n.pidRunning == false ) {
     this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
     t = false;
   }
-};*/
+};
 
-this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
+/*g = File("/Users/paulosetinsky/magic_music/video_onset_times/quantized_onset_times.txt","r");
+~quantizedOnsetTimes = g.readAllString;
+~quantizedOnsetTimes = ~quantizedOnsetTimes.split($,);
+~quantizedOnsetTimes = ~quantizedOnsetTimes.collect { |ot| ot.asFloat };*/
+
+/*this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([
+  ~mainBeat,
+  "/Users/paulosetinsky/magic_music/videos/output.mp4"
+]);*/
