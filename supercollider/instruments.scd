@@ -1,96 +1,100 @@
 (
 
-(
-SynthDef(\SOSkick,
- { arg out = 0, freq = 50, mod_freq = 5, mod_index = 5, sustain = 0.4, amp = 0.8, beater_noise_level = 0.025;
-  var pitch_contour, drum_osc, drum_lpf, drum_env;
-  var beater_source, beater_hpf, beater_lpf, lpf_cutoff_contour, beater_env;
-  var kick_mix;
-  pitch_contour = Line.kr(freq*2, freq, 0.02);
-  drum_osc = PMOsc.ar(	pitch_contour,
-   mod_freq,
-   mod_index/1.3,
-   mul: 1,
-   add: 0);
-  drum_lpf = LPF.ar(in: drum_osc, freq: 1000, mul: 1, add: 0);
-  drum_env = drum_lpf * EnvGen.ar(Env.perc(0.005, sustain), 1.0, doneAction: 2);
-  beater_source = WhiteNoise.ar(beater_noise_level);
-  beater_hpf = HPF.ar(in: beater_source, freq: 500, mul: 1, add: 0);
-  lpf_cutoff_contour = Line.kr(6000, 500, 0.03);
-  beater_lpf = LPF.ar(in: beater_hpf, freq: lpf_cutoff_contour, mul: 1, add: 0);
-  beater_env = beater_lpf * EnvGen.ar(Env.perc, 1.0, doneAction: 2);
-  kick_mix = Mix.new([drum_env, beater_env]) * 2 * amp;
-  Out.ar(out, [kick_mix, kick_mix])
- }
-).add
-);
+SynthDef(\kick, {
+ arg out=0, amp=0.1, pan=0;
+ var env0, env1, env1m, son;
+
+ env0 =  EnvGen.ar(Env.new([0.5, 1, 0.5, 0], [0.005, 0.06, 0.26], [-4, -2, -4]), doneAction:2);
+ env1 = EnvGen.ar(Env.new([110, 59, 29], [0.005, 0.29], [-4, -5]));
+ env1m = env1.midicps;
+
+ son = LFPulse.ar(env1m, 0, 0.5, 1, -0.5);
+ son = son + WhiteNoise.ar(1);
+ son = LPF.ar(son, env1m*1.5, env0);
+ son = son + SinOsc.ar(env1m, 0.5, env0);
+
+ son = son * 1.2;
+ son = son.clip2(1);
+
+ Out.ar(out, Pan2.ar(son * amp));
+}).add;
+
+SynthDef(\clap, {
+ arg out=0, amp = 0.1, pan=0;
+ var env1, env2, son, noise1, noise2;
+
+ env1 = EnvGen.ar(Env.new([0, 1, 0, 1, 0, 1, 0, 1, 0], [0.001, 0.013, 0, 0.01, 0, 0.01, 0, 0.03], [0, -3, 0, -3, 0, -3, 0, -4]));
+ env2 = EnvGen.ar(Env.new([0, 1, 0], [0.02, 0.3], [0, -4]), doneAction:2);
+
+ noise1 = WhiteNoise.ar(env1);
+ noise1 = HPF.ar(noise1, 600);
+ noise1 = BPF.ar(noise1, 2000, 3);
+
+ noise2 = WhiteNoise.ar(env2);
+ noise2 = HPF.ar(noise2, 1000);
+ noise2 = BPF.ar(noise2, 1200, 0.7, 0.7);
+
+ son = noise1 + noise2;
+ son = son * 2;
+ son = son.softclip * amp;
+
+ Out.ar(out, Pan2.ar(son, pan));
+}).add;
+
+SynthDef(\cymbal, {
+ arg out=0, baseFreq = 300, time = 250, amp=0.1;
+ //var freqs = [baseFreq, baseFreq*1.3420, baseFreq*1.2312, baseFreq*1.6532, baseFreq*1.9523, baseFreq*2.1523];
+ //var freqs = [78.6, 140.44, 123.87, 219.4, 787.5, 531.3];
+ //var freqs = [205.35, 254.29, 294.03, 304.41, 369.64, 522.71];
+ var freqs = [205.35, 304.41, 369.64, 522.71, 540.54, 812.21];
+ var signal, pulseEnv;
+
+ pulseEnv = EnvGen.ar(Env.new([1.0, 0.6], [time], [-0.5]), timeScale:(1/1000));
+ signal = Mix.new(LFPulse.ar(freqs * 4.09));
+ signal = (BinaryOpUGen('==', signal, 6.0) * 0.6) + (BinaryOpUGen('==', signal, 2.0) * 0.2) + (BinaryOpUGen('==', signal, 1.0) * 0.9); // XOR
+ signal = (signal * pulseEnv) + (Mix.new(LFPulse.ar(freqs, width:0.55)) * 0.9);
+ signal = RLPF.ar(signal, 7000, 0.6);
+ signal = RHPF.ar(signal, 6800, 1.5);
+ signal = RHPF.ar(signal, 6800, 1.5);
+ signal = RHPF.ar(signal, 1200, 1.5);
+ signal = signal + FreeVerb.ar(signal);
+ signal = signal * EnvGen.ar(Env.new([0, 1, 0.4, 0, 0], [2, time, 50, 500], [0, -0.5, 0, -50]), timeScale:(1/1000), doneAction:2);
+ signal = [signal, DelayN.ar(signal, 0.005, 0.005)];
+ OffsetOut.ar(out, signal*4*amp);
+}).add;
 
 (
-SynthDef(\SOStom,
- {arg out = 0, sustain = 0.4, drum_mode_level = 0.25,
-  freq = 90, drum_timbre = 1.0, amp = 0.8;
-  var drum_mode_sin_1, drum_mode_sin_2, drum_mode_pmosc, drum_mode_mix, drum_mode_env;
-  var stick_noise, stick_env;
-  var drum_reson, tom_mix;
+SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.25, coef = 0.5;
 
-  drum_mode_env = EnvGen.ar(Env.perc(0.005, sustain), 1.0, doneAction: 2);
-  drum_mode_sin_1 = SinOsc.ar(freq*0.8, 0, drum_mode_env * 0.5);
-  drum_mode_sin_2 = SinOsc.ar(freq, 0, drum_mode_env * 0.5);
-  drum_mode_pmosc = PMOsc.ar(	Saw.ar(freq*0.9),
-   freq*0.85,
-   drum_timbre/1.3,
-   mul: drum_mode_env*5,
-   add: 0);
-  drum_mode_mix = Mix.new([drum_mode_sin_1, drum_mode_sin_2, drum_mode_pmosc]) * drum_mode_level;
-  stick_noise = Crackle.ar(2.01, 1);
-  stick_env = EnvGen.ar(Env.perc(0.005, 0.01), 1.0) * 3;
-  tom_mix = Mix.new([drum_mode_mix, stick_env]) * 2 * amp;
-  Out.ar(out, [tom_mix, tom_mix])
- }
-).add
-);
+ var env, snd;
+ env = EnvGen.kr(Env.linen(0, decay, 0), doneAction: 2);
 
-(
-SynthDef(\mario, { |out, amp=0.2, freq=440|
- var snd;
- snd = LFPulse.ar(freq)!1;
- snd = snd * EnvGen.ar(Env.linen(0.001, 0.1, 0.03), doneAction:2);
- snd = GVerb.ar(snd, 20, 5);
- OffsetOut.ar([0,1], snd*amp);
+ freq = freq/2.0;
+
+ snd = Pluck.ar(
+  in: WhiteNoise.ar(amp),
+  trig: Impulse.kr(0),
+  maxdelaytime: 0.1,
+  delaytime: freq.reciprocal,
+  decaytime: decay,
+  coef: coef
+ );
+
+ snd = snd.distort;
+ snd = FreeVerb.ar(snd, 0.7, 0.5, 0.3);
+
+ Out.ar(0, [snd, snd]*4);
 }).add;
 );
 
-(
-SynthDef(\first,
- {
-  arg numharm,adder,repeats,roomsize,revtime;
-  var outArray;
-  outArray = [
-   GVerb.ar(
-    in: Blip.ar(
-     freq:
-     Duty.kr(
-      dur: 1/[1,2,4,8],
-      reset: 0,
-      level: Dseq(
-       list: [19,17,12,7,3,0] + adder,
-       repeats: repeats
-      ),
-      doneAction: 2
-     ).midicps*[1,4,8],
-     numharm: numharm,
-     mul: 0.75
-    ).sum,
-    roomsize: roomsize,
-    revtime: revtime
-
-   )
-  ];
-
-  Out.ar([0,1], Pan2.ar(outArray,0,0.02));
-
- }
-).add;
-);
+/*(
+SynthDef(\hum, { arg gate=1,fadeInTime=1,freq=2;
+ var exc, amp;
+ amp = LFPulse.kr(freq,-0.25,0.1,0.002);
+ exc = LPZ1.ar(WhiteNoise.ar([amp,amp]));
+ o = Klank.ar(`[FloatArray.fill(4, { rand(80,84)}), nil, FloatArray[1, 1, 1, 1]], exc);
+ Out.ar(0, o * Env.asr(0.001,1,0.5).kr(2,gate));
+}).add;
+);*/
 
 );

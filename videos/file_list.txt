@@ -1,0 +1,13 @@
+file /Users/paulosetinsky/magic_music/videos/output_segment_00.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_01.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_02.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_03.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_04.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_05.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_06.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_07.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_08.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_09.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_10.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_11.mp4
+file /Users/paulosetinsky/magic_music/videos/output_segment_12.mp4
