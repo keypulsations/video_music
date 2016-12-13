@@ -71,27 +71,25 @@ epanechnikovKernel = { |n|
 /* round ~mainBeat to nearest hundredth, as ffmpeg does not seem to be accurate beyond that*/
 ~mainBeat = kdeCalculate.(~onsets).round(0.01);
 
-"main beat: ".postln;
-~mainBeat.postln;
-
 n = ("cd /Users/paulosetinsky/magic_music && ruby execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;
 
 t = true;
 while({ t == true }) {
   if( n.pidRunning == false ) {
+
+    ~tempo = case
+      { ~mainBeat < 2 } { (2 - (~mainBeat/2)) }
+      { ~mainBeat < 3 } { (2 - (~mainBeat/2)) * 2 }
+      { ~mainBeat < 4 } {
+       b = (2 - (~mainBeat/2));
+       while({ b < 1 }) {
+        b = b * 2;
+       };
+       b;
+      }
+      { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
+
     this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
     t = false;
   }
 };
-
-/*g = File("/Users/paulosetinsky/magic_music/video_onset_times/quantized_onset_times.txt","r");
-~quantizedOnsetTimes = g.readAllString;
-~quantizedOnsetTimes = ~quantizedOnsetTimes.split($,);
-~quantizedOnsetTimes = ~quantizedOnsetTimes.collect { |ot| ot.asFloat };*/
-
-/*this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([
-  ~mainBeat,
-  "/Users/paulosetinsky/magic_music/videos/output.mp4"
-]);*/
-
-/*this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);*/

@@ -1,25 +1,5 @@
 (
 
-SynthDef(\acid, {
- arg out=0, gate=1, freq=440, amp=0.1, pan=0;
- var env1, env2, son, pitch;
- pitch = freq.cpsmidi;
- pitch = Lag.kr(pitch, 0.12 * (1-Trig.kr(gate, 0.001)) * gate);
- env1 = EnvGen.ar(Env.new([0, 1.0, 0, 0], [0.001, 2.0, 0.04], [0, -4, -4], 2), gate, amp);
- env2 = EnvGen.ar(Env.adsr(0.001, 0.8, 0, 0.8, 70, -4), gate);
- son = LFPulse.ar(pitch.midicps, 0.0, 0.51, 2, -1);
-
- son = RLPF.ar(son, (pitch + env2).midicps, 0.3);
- son = son * env1;
-
- Out.ar(out, Pan2.ar(son, pan));
-},
-metadata: (
- credit: "from 08091500Acid309 by_otophilia",
- tags: [\pitched, \acid, \phat, \subtractive]
-)
-).add;
-
 SynthDef(\kick, {
  arg out=0, amp=0.1, pan=0;
  var env0, env1, env1m, son;
@@ -37,12 +17,7 @@ SynthDef(\kick, {
  son = son.clip2(1);
 
  Out.ar(out, Pan2.ar(son * amp));
-},
-metadata: (
- credit: "from 08091500Acid309 by_otophilia",
- tags: [\kick, \drum, \percussion]
-)
-).add;
+}).add;
 
 SynthDef(\clap, {
  arg out=0, amp = 0.1, pan=0;
@@ -64,12 +39,7 @@ SynthDef(\clap, {
  son = son.softclip * amp;
 
  Out.ar(out, Pan2.ar(son, pan));
-},
-metadata: (
- credit: "from 08091500Acid309 by_otophilia",
- tags: [\clap, \percussion]
-)
-).add;
+}).add;
 
 SynthDef(\cymbal, {
  arg out=0, baseFreq = 300, time = 250, amp=0.1;
@@ -91,49 +61,10 @@ SynthDef(\cymbal, {
  signal = signal * EnvGen.ar(Env.new([0, 1, 0.4, 0, 0], [2, time, 50, 500], [0, -0.5, 0, -50]), timeScale:(1/1000), doneAction:2);
  signal = [signal, DelayN.ar(signal, 0.005, 0.005)];
  OffsetOut.ar(out, signal*4*amp);
-},
-metadata: (
- credit: "Published on sc-users 2007-08-25 by Ryan Brown",
- tags: ['808', \hihat, \percussion, \cymbal]
-)
-).add;
-
-/*(
-b = Task({
-var delta, dur, note;
-dur = Prand([10, 15], inf).asStream;
-note = Pwrand([145, 290], [0.8,0.2], inf).asStream;
-
-while {
-delta = dur.next;
-delta.notNil
-} {
-Synth(\bass,[freq: note.next,decay:4]);
-delta.yield;
-}
-}).play(quant:TempoClock.default.beats+1.0);
-)*/
-
-/*(
-{
-var freq, numparts;
-numparts = 50;
-freq = SinOsc.kr(Array.fill(numparts, {Rand(0.05, 0.2)}),
-Array.fill(numparts, {Rand(0, 1.0)})).range(1000, 3000);
-LeakDC.ar(
-Pan2.ar(
-Pluck.ar(
-WhiteNoise.ar(0.1).dup(numparts),
-Impulse.kr(Array.fill(numparts, {Rand(10, 12)})),
-100.reciprocal, freq.reciprocal, 2, Rand(0.01, 0.2), mul: 1),
-Array.fill(numparts, {Rand.new(-1.0, 1.0)}))
-.sum
-);
-}.play(s);
-);*/
+}).add;
 
 (
-SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.35, coef = 0.6;
+SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.25, coef = 0.5;
 
  var env, snd;
  env = EnvGen.kr(Env.linen(0, decay, 0), doneAction: 2);
@@ -143,17 +74,27 @@ SynthDef(\pluck, {arg amp = 0.5, freq = 440, decay = 0.35, coef = 0.6;
  snd = Pluck.ar(
   in: WhiteNoise.ar(amp),
   trig: Impulse.kr(0),
-  maxdelaytime: 0.25,
+  maxdelaytime: 0.1,
   delaytime: freq.reciprocal,
   decaytime: decay,
   coef: coef
  );
 
  snd = snd.distort;
- snd = FreeVerb.ar(snd, 0.4, 0.3, 0.3);
+ snd = FreeVerb.ar(snd, 0.7, 0.5, 0.3);
 
  Out.ar(0, [snd, snd]*4);
 }).add;
-)
+);
+
+/*(
+SynthDef(\hum, { arg gate=1,fadeInTime=1,freq=2;
+ var exc, amp;
+ amp = LFPulse.kr(freq,-0.25,0.1,0.002);
+ exc = LPZ1.ar(WhiteNoise.ar([amp,amp]));
+ o = Klank.ar(`[FloatArray.fill(4, { rand(80,84)}), nil, FloatArray[1, 1, 1, 1]], exc);
+ Out.ar(0, o * Env.asr(0.001,1,0.5).kr(2,gate));
+}).add;
+);*/
 
 );

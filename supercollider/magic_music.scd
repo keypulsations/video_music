@@ -1,24 +1,17 @@
 (
+s = Server.local;
 s.boot;
-
 s.waitForBoot({
 
-  ~tempo = case
-  	{ ~mainBeat < 2 } { (2 - (~mainBeat/2)) }
-  	{ ~mainBeat < 3 } { (2 - (~mainBeat/2)) * 2 }
-    { ~mainBeat < 4 } {
-     b = (2 - (~mainBeat/2));
-     while({ b < 1 }) {
-      b = b * 2;
-     };
-     b;
-    }
-    { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
+ s.recSampleFormat = "int16";
+ s.recChannels = 1;
+ s.recHeaderFormat = "WAV";
+ s.prepareForRecord("/Users/paulosetinsky/Desktop/magic_music.wav");
 
-  "mainBeat-xxx".postln;
-  ~mainBeat.postln;
-  "tempo-xxx".postln;
-  ~tempo.postln;
+ "MAIN BEAT".postln;
+ ~mainBeat.postln;
+ "TEMPO".postln;
+ ~tempo.postln;
 
  TempoClock.default.tempo = ~tempo;
  this.executeFile("/Users/paulosetinsky/magic_music/supercollider/instruments.scd");
@@ -28,45 +21,35 @@ s.waitForBoot({
  ~melodyA = SimpleMIDIFile.read(~midiA);
  ~melodyB = SimpleMIDIFile.read(~midiB);
 
-/* ~quantizedDurations = ~quantizedOnsetTimes.differentiate;
- "QUANT DURS".postln;
- ~quantizedDurations.postln;
-
- i=0;
- r = Routine({
-  loop {
-   if(i<=~quantizedDurations.size) {
-    var waitTime = ~quantizedDurations[i];
-    waitTime.wait;
-    Synth(\clap, [\amp, 0.4]);
-    i=i+1;
-   };
-  };
- });*/
-
- x = {
-  var exc, amp;
-  amp = LFPulse.kr(~mainBeat,0.5,0.1,0.002) * EnvGen.kr(Env([0.1, 1], [~mainBeat * 10], curve: \exponential));
-  exc = LPZ1.ar(GrayNoise.ar([amp,amp]));
-  Klank.ar(`[FloatArray.fill(4, { 82.41 }),
-   nil,
-   FloatArray[1, 1, 1, 1]], exc);
- };
-
  t = Routine({
-  ~melodyA.p(\pluck).play(TempoClock.new(~tempo));
-  x.play;
+
+  s.record;
+
+  a = ~melodyA.p(\pluck).play(TempoClock.new(~tempo));
   8.wait;
+
   Pbind(\instrument, \kick, \amp, 0.25).play(TempoClock.new(~tempo));
-  16.wait;
-  ~melodyB.p(\pluck).play(TempoClock.new(~tempo));
-  1.wait;
-  Pbind(\instrument, \clap, \amp, 0.25).play(TempoClock.new(~tempo));
+  8.wait;
+
+  a.stop;
+  b = ~melodyB.p(\pluck).play(TempoClock.new(~tempo));
+  8.wait;
+
+  ~melodyA.p(\kick).play(TempoClock.new(~tempo/2));
+  0.25.wait;
+  ~melodyB.p(\clap).play(TempoClock.new(~tempo/2));
+
+  7.75.wait;
+  a = ~melodyA.p(\pluck).play(TempoClock.new(~tempo));
+  Pbind(\instrument, \cymbal, \amp, 0.1).play(TempoClock.new(~tempo*2));
+
+  40.wait;
+  s.stopRecording;
+
  });
 
- ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
  t.play;
- // r.play(TempoClock.new(1));
+ ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
 
 });
 

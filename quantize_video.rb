@@ -137,21 +137,15 @@ class QuantizeVideo
 
   def write_output_commands
     last_onset = nil
-    durs = []
     @speed_multiples_hash.each_with_index do |onset_and_speed_multiple,idx|
       onset = onset_and_speed_multiple[0]
       mult  = onset_and_speed_multiple[1]
       extraction_start_time = extraction_start_time(last_onset, idx)
       duration = duration(onset, last_onset, idx)
-
-      durs << ((durs[idx-1] || 0) + duration * mult).round(2)
-
       last_onset = onset
-
-      write_extracted_scene_segment(extraction_start_time, duration, idx, mult, last_onset)
+      write_extracted_scene_segment(extraction_start_time, duration, idx)
       write_generate_altered_mp4(mult, idx)
     end
-    puts durs
   end
 
   def write_quantized_onsets
@@ -189,15 +183,19 @@ class QuantizeVideo
   end
 
   def mezzanine_segment_file_name(segment_idx)
-    if segment_idx < 10
-      segment_idx = "0" + segment_idx.to_s
-    else
-      segment_idx = segment_idx.to_s
-    end
+    segment_idx = stringify_segment_idx(segment_idx)
     "/Users/paulosetinsky/magic_music/videos/mezzanine_segment_#{segment_idx}.mp4"
   end
 
-  def write_extracted_scene_segment(extraction_start_time, duration, segment_idx,mult,last_onset)
+  def stringify_segment_idx(segment_idx)
+    if segment_idx < 10
+      "0" + segment_idx.to_s
+    else
+      segment_idx.to_s
+    end
+  end
+
+  def write_extracted_scene_segment(extraction_start_time, duration, segment_idx)
     file_name = mezzanine_segment_file_name(segment_idx)
     command = "ffmpeg -i #{@path_to_video} -ss #{extraction_start_time} -t #{duration} #{file_name} && "
     @extract_scene_segments_command += command
@@ -205,6 +203,7 @@ class QuantizeVideo
 
   def write_generate_altered_mp4(mult, segment_idx)
     file_name = mezzanine_segment_file_name(segment_idx)
+    segment_idx = stringify_segment_idx(segment_idx)
     command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(mult)}*PTS\" -an \
       /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
     @generate_altered_mp4s_command += command
@@ -217,7 +216,6 @@ class QuantizeVideo
     extract_segments = extract_segments[0,extract_segments.rindex("&&")].strip
     alter_segments   = alter_segments[0,alter_segments.rindex("&&")].strip
 
-    "extracting segments..."
     `#{extract_segments} && #{alter_segments} && #{concatenate_segments}`
   end
 

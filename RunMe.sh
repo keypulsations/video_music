@@ -2,7 +2,7 @@
 root=$(pwd)
 
 # DETERMINE ONSET TIMES OF VIDEO SCENE CHANGES
-ffmpeg -i $1 -filter:v "select='gt(scene,0.4)',showinfo"  -f null  - 2> ${root}/video_onset_times/ffouts/ffout.txt
+# ffmpeg -i $1 -filter:v "select='gt(scene,0.4)',showinfo"  -f null  - 2> ${root}/video_onset_times/ffouts/ffout.txt
 grep showinfo video_onset_times/ffouts/ffout.txt | grep pts_time:[0-9.]* -o | grep '[0-9]*\.[0-9]*' -o  > video_onset_times/onset_times.txt
 mapfile -t onsetTimesArray < video_onset_times/onset_times.txt
 separator=","
