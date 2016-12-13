@@ -93,3 +93,5 @@ while({ t == true }) {
   ~mainBeat,
   "/Users/paulosetinsky/magic_music/videos/output.mp4"
 ]);*/
+
+/*this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);*/

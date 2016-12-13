@@ -4,10 +4,21 @@ s.boot;
 s.waitForBoot({
 
   ~tempo = case
-  	{ ~mainBeat < 2 } { (2 -  ~mainBeat) * 4 }
-  	{ ~mainBeat < 3 } { (4 -  ~mainBeat) }
-    { ~mainBeat < 4 } { (2 - (~mainBeat/2)) * 4 }
-    { ~mainBeat < 5 } { (8 - (~mainBeat)) / 2 };
+  	{ ~mainBeat < 2 } { (2 - (~mainBeat/2)) }
+  	{ ~mainBeat < 3 } { (2 - (~mainBeat/2)) * 2 }
+    { ~mainBeat < 4 } {
+     b = (2 - (~mainBeat/2));
+     while({ b < 1 }) {
+      b = b * 2;
+     };
+     b;
+    }
+    { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
+
+  "mainBeat-xxx".postln;
+  ~mainBeat.postln;
+  "tempo-xxx".postln;
+  ~tempo.postln;
 
  TempoClock.default.tempo = ~tempo;
  this.executeFile("/Users/paulosetinsky/magic_music/supercollider/instruments.scd");
@@ -35,7 +46,7 @@ s.waitForBoot({
 
  x = {
   var exc, amp;
-  amp = LFPulse.kr(~tempo*2,0.5,0.1,0.002) * EnvGen.kr(Env([0.1, 1], [~mainBeat * 10], curve: \exponential));
+  amp = LFPulse.kr(~mainBeat,0.5,0.1,0.002) * EnvGen.kr(Env([0.1, 1], [~mainBeat * 10], curve: \exponential));
   exc = LPZ1.ar(GrayNoise.ar([amp,amp]));
   Klank.ar(`[FloatArray.fill(4, { 82.41 }),
    nil,
