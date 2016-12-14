@@ -1,6 +1,6 @@
-# magic_music
+# Magic Music
 
-## What this code does:
+## What it does:
 
 1. takes a random video as a seed [1-2m GoPro videos with several scene changes are ideal]
 2. uses ffmpeg to extract onset times of significant scene changes
