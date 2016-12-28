@@ -3,9 +3,13 @@ s = Server.local;
 s.boot;
 s.waitForBoot({
 
+ ~magicMusicDir = thisProcess.argv[4];
+
  s.recSampleFormat = "int16";
  s.recChannels = 1;
  s.recHeaderFormat = "WAV";
+
+ /*~magicMusicDir*/
  s.prepareForRecord("/Users/paulosetinsky/Desktop/magic_music.wav");
 
  "MAIN BEAT".postln;
@@ -14,6 +18,8 @@ s.waitForBoot({
  ~tempo.postln;
 
  TempoClock.default.tempo = ~tempo;
+
+ /*~magicMusicDir*/
  this.executeFile("/Users/paulosetinsky/magic_music/supercollider/generate_instruments.scd");
 
  ~midiA = thisProcess.argv[2];
@@ -49,6 +55,7 @@ s.waitForBoot({
  });
 
  t.play;
+ /*~magicMusicDir*/
  ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
 
 });

@@ -1,6 +1,6 @@
 # Magic Music
 
-Magic Music is a prototype for the automatic generation of music soundtracks for videos. It employs the following:
+Magic Music is a prototype for the automatic generation of music soundtracks for videos. The music is not yet sophisticatedIt currently employs the following:
 
 * ffmeg for video analysis
 * TensorFlow/Magenta for melody and beat creation
@@ -18,13 +18,26 @@ Magic Music is a prototype for the automatic generation of music soundtracks for
 
 ## Dependencies
 
-* TensorFlow
-* Magenta
-* ffmpeg and ffprobe
-* SuperCollider
+* TensorFlow [needs version]
+* Magenta [needs version]
+* ffmpeg and ffprobe [needs version]
+* SuperCollider [needs version]
 
 ## Usage
 
 Within the magic_music root directory, execute:
 
 `bash RunMe.sh path_to_your_video.mp4`
+
+## Future work
+
+* More sophisticated musical structure (keep to a 2m track limitation)
+* Assess video content with [Google's Cloud Vision](https://cloud.google.com/vision/) or [Amazon's Rekognition](https://aws.amazon.com/rekognition/)
+** Pick from a list of "genres" based on video content
+* Productize the app in a web interface that accepts a video upload
+
+## TODO
+
+* Dockerize this app
+* Replace local machine's paths with relative paths
+* Write documentation for TensorFlow/Magenta integration

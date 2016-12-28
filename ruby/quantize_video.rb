@@ -144,7 +144,7 @@ class QuantizeVideo
   def write_quantized_onsets
     quantized_onset_times_str = ''
     @onsets_hsh.each { |_,v| quantized_onset_times_str << "#{v}," }
-    file_path = "/Users/paulosetinsky/magic_music/video_onset_times/quantized_onset_times.txt"
+    file_path = "../video_onset_times/quantized_onset_times.txt"
     quantized_onset_times_str = quantized_onset_times_str.chomp(',')
     File.open(file_path, 'w') { |file| file.write(quantized_onset_times_str) }
   end
