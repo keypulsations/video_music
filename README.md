@@ -31,7 +31,7 @@ Within the magic_music root directory, execute:
 
 ## Future work
 
-* More sophisticated musical structure (keep to a 2m track limitation)
+* Much more sophisticated musical variation and structure (keep to a 2m track limitation)
 * Assess video content with [Google's Cloud Vision](https://cloud.google.com/vision/) or [Amazon's Rekognition](https://aws.amazon.com/rekognition/)
 ** Pick from a list of "genres" based on video content
 * Productize the app in a web interface that accepts a video upload
@@ -39,5 +39,5 @@ Within the magic_music root directory, execute:
 ## TODO
 
 * Dockerize this app
-* Replace local machine's paths with relative paths
+* Replace local machine paths with relative paths
 * Write documentation for TensorFlow/Magenta integration
