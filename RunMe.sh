@@ -14,8 +14,8 @@ source activate magenta
 cd /Users/paulosetinsky/ai/magenta/magenta
 outputDir=/Users/paulosetinsky/ai/magenta/magenta/tmp/generated
 bash RunMe.sh ${outputDir}
-genMels=(${outputDir}/*)
+generatedMelodies=(${outputDir}/*)
 
 # CALCULATE BEST APPROXIMATE BEAT IN SUPERCOLLIDER
 cd /Applications/SuperCollider/SuperCollider.app/Contents/MacOS
-exec ./sclang ${root}/supercollider/calculate_beat.scd "${onsetTimesString}" ${root}/$1 ${genMels[@]: -1} ${genMels[@]: -2}
+exec ./sclang ${root}/supercollider/calculate_beat.scd "${onsetTimesString}" ${root}/$1 ${generatedMelodies[@]: -1} ${generatedMelodies[@]: -2}
