@@ -15,7 +15,7 @@ Currently, the musical variation is provided by TensorFlow/Magenta in the form o
 
 ## How it works
 
-1. Accepts a random video as a seed (1-2m videos with several scene changes are ideal, e.g. [GoPro Videos](https://vimeo.com/gopro/videos/page:75/sort:duration/format:thumbnail)
+1. Accepts a random video as a seed (1-2m videos with several scene changes are ideal, e.g. [GoPro Videos](https://vimeo.com/gopro/videos/page:75/sort:duration/format:thumbnail))
 2. Uses ffmpeg to extract onset times of major scene changes
 3. Determines a best approximate "beat" of the video based on scene change onset times
 4. Performs a kind of [video quantization](https://en.wikipedia.org/wiki/Quantization_(music)) by altering the speed of each scene based on this approximated beat so that the scene's length becomes a multiple of the beat
@@ -39,8 +39,7 @@ Within the magic_music root directory, execute:
 ## Future work
 
 * Much more sophisticated musical variation and structure (keep to a 2m track limitation)
-* Assess video content with [Google's Cloud Vision](https://cloud.google.com/vision/) or [Amazon's Rekognition](https://aws.amazon.com/rekognition/)
-** Pick from a list of "genres" based on video content
+* Assess video content with [Google's Cloud Vision](https://cloud.google.com/vision/) or [Amazon's Rekognition](https://aws.amazon.com/rekognition/), pick from a list of possible "genres" based on video content
 * Productize the app in a web interface that accepts a video upload
 
 ## TODO
