@@ -1,10 +1,17 @@
 # Magic Music
 
-Magic Music is a prototype for the automatic generation of music soundtracks for videos. The music is not yet sophisticatedIt currently employs the following:
+Magic Music is a work in progress that aims for the automatic generation of music soundtracks for videos. This code does a couple of things:
+
+* Generates a simple techno soundtrack for a random video
+* Alters that video so that its scenes change with the beat of the music
+
+It currently employs the following:
 
 * ffmeg for video analysis
 * TensorFlow/Magenta for melody and beat creation
 * SuperCollider for audio synthesis
+
+Currently, the musical variation is provided by TensorFlow/Magenta in the form of differing melodies and rhythms, but leaves much to be desired.
 
 ## How it works
 
