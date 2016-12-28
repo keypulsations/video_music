@@ -14,7 +14,7 @@ s.waitForBoot({
  ~tempo.postln;
 
  TempoClock.default.tempo = ~tempo;
- this.executeFile("/Users/paulosetinsky/magic_music/supercollider/instruments.scd");
+ this.executeFile("/Users/paulosetinsky/magic_music/supercollider/generate_instruments.scd");
 
  ~midiA = thisProcess.argv[2];
  ~midiB = thisProcess.argv[3];

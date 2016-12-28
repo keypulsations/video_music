@@ -18,4 +18,4 @@ genMels=(${outputDir}/*)
 
 # CALCULATE BEST APPROXIMATE BEAT IN SUPERCOLLIDER
 cd /Applications/SuperCollider/SuperCollider.app/Contents/MacOS
-exec ./sclang ${root}/supercollider/beat_calculate.scd "${onsetTimesString}" ${root}/$1 ${genMels[@]: -1} ${genMels[@]: -2}
+exec ./sclang ${root}/supercollider/calculate_beat.scd "${onsetTimesString}" ${root}/$1 ${genMels[@]: -1} ${genMels[@]: -2}

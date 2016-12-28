@@ -1,6 +1,8 @@
 # Magic Music
 
-## What it does:
+Magic Music is a prototype for the automatic generation of music soundtracks for videos. It uses ffmeg for video analysis, TensorFlow/Magenta for melody and beat creation and SuperCollider for audio synthesis.
+
+## What it does
 
 1. takes a random video as a seed [1-2m GoPro videos with several scene changes are ideal]
 2. uses ffmpeg to extract onset times of significant scene changes
