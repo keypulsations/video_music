@@ -1,5 +1,3 @@
-require 'pry-remote'
-
 class QuantizeVideo
 
   def initialize(onset_times=nil, main_beat=nil, path_to_video=nil)
@@ -29,11 +27,6 @@ class QuantizeVideo
     write_output_commands
     write_quantized_onsets
     run_output_commands
-
-    # puts @extract_scene_segments_command
-    # puts ''
-    # puts @generate_altered_mp4s_command
-
   end
 
   def video_duration_seconds

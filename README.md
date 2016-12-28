@@ -23,7 +23,7 @@ Magic Music is a prototype for the automatic generation of music soundtracks for
 * ffmpeg and ffprobe
 * SuperCollider
 
-## How to run
+## Usage
 
 Within the magic_music root directory, execute:
 
