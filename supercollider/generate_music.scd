@@ -3,8 +3,6 @@ s = Server.local;
 s.boot;
 s.waitForBoot({
 
- ~magicMusicDir = thisProcess.argv[4];
-
  s.recSampleFormat = "int16";
  s.recChannels = 1;
  s.recHeaderFormat = "WAV";

@@ -1,10 +1,11 @@
 var kdeCalculate, beatRangeTolerance, filterBeats, calculateFitness, epanechnikovKernel, kde;
 
-~rawOnsets = thisProcess.argv[0];
-~onsets    = ~rawOnsets.split($,);
-~onsets    = ~onsets.collect { |ot| ot.asFloat };
-~durations = ~onsets.differentiate;
-~video = thisProcess.argv[1];
+~rawOnsets     = thisProcess.argv[0];
+~onsets        = ~rawOnsets.split($,);
+~onsets        = ~onsets.collect { |ot| ot.asFloat };
+~durations     = ~onsets.differentiate;
+~video         = thisProcess.argv[1];
+~magicMusicDir = thisProcess.argv[5];
 
 // thanks to Nathan Ho and Dan Zink for help on this beat detection algorithm
 kdeCalculate = {
@@ -70,10 +71,9 @@ epanechnikovKernel = { |n|
 
 /* round ~mainBeat to nearest hundredth...
 ...ffmpeg does not seem to be accurate beyond that*/
-
+~quantizeVideoPath = format("%/ruby/execute_quantize_video.rb", ~magicMusicDir);
 ~mainBeat = kdeCalculate.(~onsets).round(0.01);
-
-n = ("cd /Users/paulosetinsky/magic_music && ruby ruby/execute_quantize_video.rb" + ~rawOnsets + ~mainBeat + ~video).unixCmd;
+n = ("cd /Users/paulosetinsky/magic_music && ruby" + ~quantizeVideoPath + ~rawOnsets + ~mainBeat + ~video).unixCmd;
 
 t = true;
 while({ t == true }) {
@@ -91,7 +91,7 @@ while({ t == true }) {
       }
       { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
 
-    this.executeFile("/Users/paulosetinsky/magic_music/supercollider/magic_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
+    this.executeFile("/Users/paulosetinsky/magic_music/supercollider/generate_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
     t = false;
   }
 };

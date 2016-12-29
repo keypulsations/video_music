@@ -18,4 +18,4 @@ generatedMelodies=(${outputDir}/*)
 
 # CALCULATE BEST APPROXIMATE BEAT IN SUPERCOLLIDER
 cd /Applications/SuperCollider/SuperCollider.app/Contents/MacOS
-exec ./sclang ${root}/supercollider/calculate_beat.scd "${onsetTimesString}" ${root}/$1 ${generatedMelodies[@]: -1} ${generatedMelodies[@]: -2}
+exec ./sclang ${root}/supercollider/calculate_beat.scd "${onsetTimesString}" ${root}/$1 ${generatedMelodies[@]: -1} ${generatedMelodies[@]: -2} ${root}
