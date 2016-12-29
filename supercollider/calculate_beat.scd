@@ -1,10 +1,10 @@
 var kdeCalculate, beatRangeTolerance, filterBeats, calculateFitness, epanechnikovKernel, kde;
 
-~rawOnsets     = thisProcess.argv[0];
-~onsets        = ~rawOnsets.split($,);
-~onsets        = ~onsets.collect { |ot| ot.asFloat };
-~durations     = ~onsets.differentiate;
-~video         = thisProcess.argv[1];
+~rawOnsets      = thisProcess.argv[0];
+~onsets         = ~rawOnsets.split($,);
+~onsets         = ~onsets.collect { |ot| ot.asFloat };
+~durations      = ~onsets.differentiate;
+~video          = thisProcess.argv[1];
 ~magicMusicPath = thisProcess.argv[5];
 
 // thanks to Nathan Ho and Dan Zink for help on this beat detection algorithm
@@ -77,7 +77,7 @@ epanechnikovKernel = { |n|
 ~runRuby  = format("cd % && ruby", ~magicMusicPath);
 n = (~runRuby + ~quantizeVideoPath + ~rawOnsets + ~mainBeat + ~video).unixCmd;
 
-/*t = true;
+t = true;
 while({ t == true }) {
   if( n.pidRunning == false ) {
 
@@ -96,17 +96,4 @@ while({ t == true }) {
     this.executeFile(format("%/supercollider/generate_music.scd", ~magicMusicPath)).value([~mainBeat, format("%/videos/output.mp4", ~magicMusicPath)]);
     t = false;
   };
-};*/
-
-~tempo = case
-  { ~mainBeat < 2 } { (2 - (~mainBeat/2)) }
-  { ~mainBeat < 3 } { (2 - (~mainBeat/2)) * 2 }
-  { ~mainBeat < 4 } {
-   b = (2 - (~mainBeat/2));
-   while({ b < 1 }) {
-    b = b * 2;
-   };
-   b;
-  }
-  { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
-this.executeFile(format("%/supercollider/generate_music.scd", ~magicMusicPath)).value([~mainBeat, format("%/videos/output.mp4", ~magicMusicPath)]);
+};
