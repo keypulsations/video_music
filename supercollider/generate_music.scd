@@ -7,8 +7,8 @@ s.waitForBoot({
  s.recChannels = 1;
  s.recHeaderFormat = "WAV";
 
- /*~magicMusicDir*/
- s.prepareForRecord("/Users/paulosetinsky/Desktop/magic_music.wav");
+ ~outputPath = format("%/magic_music.wav", ~magicMusicPath);
+ s.prepareForRecord(~outputPath);
 
  "MAIN BEAT".postln;
  ~mainBeat.postln;
@@ -17,8 +17,7 @@ s.waitForBoot({
 
  TempoClock.default.tempo = ~tempo;
 
- /*~magicMusicDir*/
- this.executeFile("/Users/paulosetinsky/magic_music/supercollider/generate_instruments.scd");
+ this.executeFile(format("%/supercollider/generate_instruments.scd", ~magicMusicPath));
 
  ~midiA = thisProcess.argv[2];
  ~midiB = thisProcess.argv[3];
@@ -53,8 +52,8 @@ s.waitForBoot({
  });
 
  t.play;
- /*~magicMusicDir*/
- ("ffplay -i -autoexit -showmode 0 -an /Users/paulosetinsky/magic_music/videos/output.mp4").unixCmd;
+ ~outputVideoPath = format("%/videos/output.mp4", ~magicMusicPath);
+ ("ffplay -i -autoexit -showmode 0 -an" + ~outputVideoPath).unixCmd;
 
 });
 

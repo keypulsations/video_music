@@ -5,7 +5,7 @@ var kdeCalculate, beatRangeTolerance, filterBeats, calculateFitness, epanechniko
 ~onsets        = ~onsets.collect { |ot| ot.asFloat };
 ~durations     = ~onsets.differentiate;
 ~video         = thisProcess.argv[1];
-~magicMusicDir = thisProcess.argv[5];
+~magicMusicPath = thisProcess.argv[5];
 
 // thanks to Nathan Ho and Dan Zink for help on this beat detection algorithm
 kdeCalculate = {
@@ -70,12 +70,14 @@ epanechnikovKernel = { |n|
 };
 
 /* round ~mainBeat to nearest hundredth...
-...ffmpeg does not seem to be accurate beyond that*/
-~quantizeVideoPath = format("%/ruby/execute_quantize_video.rb", ~magicMusicDir);
-~mainBeat = kdeCalculate.(~onsets).round(0.01);
-n = ("cd /Users/paulosetinsky/magic_music && ruby" + ~quantizeVideoPath + ~rawOnsets + ~mainBeat + ~video).unixCmd;
+...ffmpeg does not seem to be accurate beyond that */
 
-t = true;
+~quantizeVideoPath = format("%/ruby/execute_quantize_video.rb", ~magicMusicPath);
+~mainBeat = kdeCalculate.(~onsets).round(0.01);
+~runRuby  = format("cd % && ruby", ~magicMusicPath);
+n = (~runRuby + ~quantizeVideoPath + ~rawOnsets + ~mainBeat + ~video).unixCmd;
+
+/*t = true;
 while({ t == true }) {
   if( n.pidRunning == false ) {
 
@@ -91,7 +93,20 @@ while({ t == true }) {
       }
       { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
 
-    this.executeFile("/Users/paulosetinsky/magic_music/supercollider/generate_music.scd").value([~mainBeat, "/Users/paulosetinsky/magic_music/videos/output.mp4"]);
+    this.executeFile(format("%/supercollider/generate_music.scd", ~magicMusicPath)).value([~mainBeat, format("%/videos/output.mp4", ~magicMusicPath)]);
     t = false;
+  };
+};*/
+
+~tempo = case
+  { ~mainBeat < 2 } { (2 - (~mainBeat/2)) }
+  { ~mainBeat < 3 } { (2 - (~mainBeat/2)) * 2 }
+  { ~mainBeat < 4 } {
+   b = (2 - (~mainBeat/2));
+   while({ b < 1 }) {
+    b = b * 2;
+   };
+   b;
   }
-};
+  { ~mainBeat < 5 } { (8 - ~mainBeat) / 2 };
+this.executeFile(format("%/supercollider/generate_music.scd", ~magicMusicPath)).value([~mainBeat, format("%/videos/output.mp4", ~magicMusicPath)]);

@@ -13,8 +13,8 @@ class QuantizeVideo
     @generate_altered_mp4s_command = ""
     @onsets_hash = {}
     @path_to_video = path_to_video
-
     @perfect_beats = []
+
     num_perfect_beats = (video_duration_seconds.to_f / main_beat).round + 1
     num_perfect_beats.times do |i|
       perfect_beats << (main_beat * i).round(2)
@@ -187,7 +187,8 @@ private
 
   def mezzanine_segment_file_name(segment_idx)
     segment_idx = stringify_segment_idx(segment_idx)
-    "/Users/paulosetinsky/magic_music/videos/mezzanine_segment_#{segment_idx}.mp4"
+    path = `pwd`
+    "#{path}/videos/mezzanine_segment_#{segment_idx}.mp4".gsub("\n","")
   end
 
   def stringify_segment_idx(segment_idx)
@@ -206,9 +207,10 @@ private
 
   def write_generate_altered_mp4(mult, segment_idx)
     file_name = mezzanine_segment_file_name(segment_idx)
+    path = `pwd`
+    output_segment_path = "#{path}/videos/output_segment_#{segment_idx}.mp4".gsub("\n","")
     segment_idx = stringify_segment_idx(segment_idx)
-    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(mult)}*PTS\" -an \
-      /Users/paulosetinsky/magic_music/videos/output_segment_#{segment_idx}.mp4 && "
+    command = "ffmpeg -i #{file_name} -filter:v \"setpts=#{(mult)}*PTS\" -an \ #{output_segment_path} && "
     self.generate_altered_mp4s_command += command
   end
 
