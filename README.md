@@ -34,7 +34,7 @@ Currently, the musical variation is provided by TensorFlow/Magenta in the form o
 
 Within the magic_music root directory, execute:
 
-`bash RunMe.sh path/to/video.mp4 path/to/magenta/`
+`bash RunMe.sh path/to/video.mp4 path/to/magenta/ path/to/magenta/attention_bundle.mag`
 
 ## Future work
 
