@@ -7,7 +7,7 @@ Magic Music is a work in progress that aims for the automatic generation of musi
 
 It currently employs the following:
 
-* ffmeg for video analysis
+* ffmpeg for video analysis
 * TensorFlow/Magenta for melody and beat creation
 * SuperCollider for audio synthesis
 
