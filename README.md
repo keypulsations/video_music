@@ -11,7 +11,7 @@ It currently employs the following:
 * TensorFlow/Magenta for melody and beat creation
 * SuperCollider for audio synthesis
 
-Currently, the musical variation is provided by TensorFlow/Magenta in the form of differing melodies and rhythms, but leaves much to be desired.
+Currently, the musical variation is provided by TensorFlow/Magenta in the form of differing melodies and rhythms (but leaves much to be desired!)
 
 ## How it works
 
