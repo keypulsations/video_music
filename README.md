@@ -34,7 +34,7 @@ Currently, the musical variation is provided by TensorFlow/Magenta in the form o
 
 Within the magic_music root directory, execute:
 
-`bash RunMe.sh path_to_your_video.mp4`
+`bash RunMe.sh path/to/video.mp4 path/to/magenta/`
 
 ## Future work
 
@@ -45,5 +45,4 @@ Within the magic_music root directory, execute:
 ## TODO
 
 * Dockerize this app
-* Replace local machine paths with relative paths
 * Write documentation for TensorFlow/Magenta integration
