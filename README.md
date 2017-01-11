@@ -5,6 +5,9 @@ Magic Music is a work in progress that aims for the automatic generation of musi
 * Generates a simple techno soundtrack for a random video
 * Alters that video so that its scenes change with the beat of the music
 
+example video with scene changes synced to generated musical beat:
+http://bit.ly/2jiZCLM
+
 It currently employs the following:
 
 * ffmpeg for video analysis
