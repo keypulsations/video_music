@@ -1,12 +1,12 @@
-# Magic Music
+# Video Music
 
-Magic Music is a work in progress that aims for the automatic generation of music soundtracks for videos. This code does a couple of things:
+Video Music is a work in progress that aims for the automatic generation of music soundtracks for videos. This code does a couple of things:
 
 * Generates a simple techno soundtrack for a random video
 * Alters that video so that its scenes change with the beat of the music
 
 example video with scene changes synced to generated musical beat:
-http://bit.ly/2jiZCLM
+https://goo.gl/JNcuql
 
 It currently employs the following:
 
@@ -35,7 +35,7 @@ Currently, the musical variation is provided by TensorFlow/Magenta in the form o
 
 ## Usage
 
-Within the magic_music root directory, execute:
+Within the video_music root directory, execute:
 
 `bash RunMe.sh path/to/video.mp4 path/to/magenta/ path/to/magenta/attention_bundle.mag`
 
