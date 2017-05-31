@@ -1,5 +1,4 @@
 #!/usr/local/bin/bash
-
 root=$(pwd)
 videoPath=$1
 songPath=$2
@@ -14,5 +13,4 @@ onsetTimesString="$( printf "${separator}%s" "${onsetTimesArray[@]}" )"
 onsetTimesString="${onsetTimesString:${#separator}}" # remove leading separator
 
 # CALCULATE BEST APPROXIMATE BEAT IN SUPERCOLLIDER
-cd /Applications/SuperCollider/SuperCollider.app/Contents/MacOS
-ruby ruby/video_quantizer.rb "${onsetTimesString}" ${root}/${videoPath} ${root}/${songPath} ${songTempo}
+ruby ${root}/ruby/execute_video_quantizer.rb "${onsetTimesString}" ${root}/${videoPath} ${root}/${songPath} ${songTempo}

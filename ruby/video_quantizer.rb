@@ -2,16 +2,18 @@ class VideoQuantizer
 
   attr_accessor :extract_scene_segments_command, :generate_altered_mp4s_command,
                 :onsets_hash, :perfect_beats, :path_to_video, :speed_multiples,
-                :speed_multiples_hash
+                :speed_multiples_hash, :path_to_song, :path
 
   def initialize(onset_times, path_to_video, path_to_song, song_tempo=140)
-    main_beat = song_tempo/60.0
+    main_beat = song_tempo.to_f/60.0
 
     @extract_scene_segments_command = ""
     @generate_altered_mp4s_command = ""
     @onsets_hash = {}
     @path_to_video = path_to_video
+    @path_to_song = path_to_song
     @perfect_beats = []
+    @path = `pwd`
 
     num_perfect_beats = (video_duration_seconds.to_f / main_beat).round + 1
     num_perfect_beats.times do |i|
@@ -185,7 +187,6 @@ private
 
   def mezzanine_segment_file_name(segment_idx)
     segment_idx = stringify_segment_idx(segment_idx)
-    path = `pwd`
     "#{path}/videos/mezzanine_segment_#{segment_idx}.mp4".gsub("\n","")
   end
 
@@ -228,11 +229,11 @@ private
   end
 
   def add_song
-    "ffmpeg -i videos/output.mp4 -i #{song_path} -c copy -map 0:v:0 -map 1:a:0 video/output_with_music.mp4"
+    "ffmpeg -i videos/output.mp4 -i #{path_to_song} -c:v copy -map 0:v:0 -map 1:a:0 -shortest videos/output_with_music.mp4"
   end
 
   def play_video
-    "ffplay -i -autoexit -showmode 0 -an videos/output_with_music.mp4"
+    "ffplay -i -autoexit -showmode 0 videos/output_with_music.mp4"
   end
 
 end
