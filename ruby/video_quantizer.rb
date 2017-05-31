@@ -1,13 +1,11 @@
-# require 'pry-remote'
-
-class QuantizeVideo
+class VideoQuantizer
 
   attr_accessor :extract_scene_segments_command, :generate_altered_mp4s_command,
                 :onsets_hash, :perfect_beats, :path_to_video, :speed_multiples,
                 :speed_multiples_hash
 
-  def initialize(onset_times=nil, main_beat=nil, path_to_video=nil)
-    main_beat = main_beat.to_f
+  def initialize(onset_times, path_to_video, path_to_song, song_tempo=140)
+    main_beat = song_tempo/60.0
 
     @extract_scene_segments_command = ""
     @generate_altered_mp4s_command = ""
@@ -221,12 +219,20 @@ private
     extract_segments = extract_segments[0,extract_segments.rindex("&&")].strip
     alter_segments   = alter_segments[0,alter_segments.rindex("&&")].strip
 
-    `#{extract_segments} && #{alter_segments} && #{concatenate_segments}`
+    `#{extract_segments} && #{alter_segments} && #{concatenate_segments} && #{add_song} && #{play_video}`
   end
 
   def concatenate_segments
     "for f in videos/output_segment_*.mp4; do echo file $PWD/$f; done > videos/file_list.txt && \
     ffmpeg -f concat -safe 0 -i videos/file_list.txt -c copy videos/output.mp4"
+  end
+
+  def add_song
+    "ffmpeg -i videos/output.mp4 -i #{song_path} -c copy -map 0:v:0 -map 1:a:0 video/output_with_music.mp4"
+  end
+
+  def play_video
+    "ffplay -i -autoexit -showmode 0 -an videos/output_with_music.mp4"
   end
 
 end
